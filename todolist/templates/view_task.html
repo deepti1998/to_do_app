@@ -1,0 +1,71 @@
+{% extends 'startpage.html' %}
+{% block title %}
+    View Task
+{% endblock %}
+{% block metainfo%}
+    <script>
+        function deleteRowfromTable(node) {
+
+            var task = $(node).closest("tr");
+            console.log(task);
+            $(node).closest("tr").remove();
+        }
+
+    </script>
+{% endblock %}
+
+{% block navitems %}
+    <a href="{% url 'create_task' %}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">Create Task</a>
+    <a href="{% url 'view_task' %}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">View Tasks</a>
+    <a href="{% url 'logout' %}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Logout</a>
+{% endblock %}
+
+{% block content %}
+    <table class="table table-hover" id="task-table">
+        <thead>
+            <tr>
+                <th>YOUR TASKS</th>
+            </tr>
+        </thead>
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Creation Date</th>
+            <th>Due Date</th>
+            <th>Due Time</th>
+            <th>Completed</th>
+            <th>Options</th>
+        </tr>
+        </thead>
+        <tbody id="task-content">
+            {% for task in data %}
+                <tr>
+                <td id="title">{{ task.0 }}</td>
+                <td id="content">{{ task.1 }}</td>
+                <td id="creation_date">{{ task.2 }}</td>
+                <td id="due_date">{{ task.3 }}</td>
+                <td id="due_time">{{ task.4 }}</td>
+                {% if task.5 %}
+                    <td id="status">Yes</td>
+                {% else %}
+                    <td id="status">No</td>
+                {% endif %}
+                <td>
+                    <a class="badge-danger" href="{% url 'delete' task.0 %}" onclick="deleteRowfromTable(this)">Delete</a>
+                    <br/>
+                    {% if task.5 == False %}
+                        <a class="badge-success" href="{% url 'mark_as_completed' task.0 %}">Mark as Completed</a>
+                        <br/>
+                    {% endif %}
+                    <a class="badge-info" href="{% url 'update_task' task.0 %}">Update</a>
+                </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+
+
+

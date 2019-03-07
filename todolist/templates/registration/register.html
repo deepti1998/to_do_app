@@ -1,0 +1,14 @@
+{% extends '../startpage.html'%}
+{% block title %}
+    Register New User
+{% endblock %}
+{% block content %}
+<h2>Register New User</h2>
+<form method="post">
+    <div class="form-group">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Register</button>
+    </div>
+</form>
+{% endblock %}

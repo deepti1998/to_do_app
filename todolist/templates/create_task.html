@@ -1,0 +1,29 @@
+{% extends 'startpage.html' %}
+{% block title %}
+    Create Task
+{% endblock %}
+{% block navitems %}
+    <a href="{% url 'create_task' %}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">Create Task</a>
+    <a href="{% url 'view_task' %}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">View Tasks</a>
+    <a href="{% url 'logout' %}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Logout</a>
+{% endblock %}
+
+{% block content %}
+     <form method="post" action="{% url 'view_task' %}">
+            <div class="form-group">
+                <br/>
+                <label for="title">Title</label>
+                <input type="text" class="form-control" name="title" id="title" placeholder="Title" required>
+                <br/>
+                <label for="content">Description</label>
+                <textarea type="text" class="form-control" name="description" id="content" rows="3" required></textarea>
+                <br/>
+                <label for="datepicker">Due Date</label>
+                <input class="form-control" type="datetime-local" name="datetime" id="datepicker" required>
+                <br/>
+                <input class="btn btn-primary " name="submit" type="submit" value="Add Task">
+
+            </div>
+        </form>
+
+{% endblock %}
