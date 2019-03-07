@@ -1,4 +1,3 @@
-import requests
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.template import loader
@@ -39,8 +38,9 @@ def view_task(request):
         description = request.POST['description']
         datetime = request.POST['datetime']
         date_time = datetime.split('T')
+        user = request.user
         try:
-            task = ToDoList.objects.get(title=title)
+            task = ToDoList.objects.get(title=title, owner=request.user)
             task.title = title
             task.content = description
             task.due_date = date_time[0]
@@ -51,7 +51,7 @@ def view_task(request):
             else:
                 task.completed = True
         except:
-            task = ToDoList(title=title, content=description, due_date=date_time[0], due_time=date_time[1])
+            task = ToDoList(title=title, content=description, due_date=date_time[0], due_time=date_time[1], owner=user)
         task.save()
     titles = []
     contents = []
@@ -60,8 +60,8 @@ def view_task(request):
     due_times = []
     status = []
     try:
-        tasks = ToDoList.objects.all()
-        print("jhb")
+        tasks = ToDoList.objects.filter(owner=request.user)
+        print(tasks)
         for task in tasks:
             titles += [task.title]
             contents += [task.content]
@@ -81,7 +81,7 @@ def view_task(request):
 
 def delete_task(request, title):
     try:
-        task = ToDoList.objects.filter(title = title)
+        task = ToDoList.objects.filter(title=title, owner=request.user)
         task.delete()
     except Exception as e:
         print(e)
@@ -91,7 +91,7 @@ def delete_task(request, title):
 @login_required
 def mark_as_completed(request, title):
     try:
-        task = ToDoList.objects.get(title=title)
+        task = ToDoList.objects.get(title=title, owner=request.user)
         task.completed = True
         task.save()
     except Exception as e:
@@ -103,35 +103,21 @@ def mark_as_completed(request, title):
 @csrf_exempt
 def update_task(request, title):
     try:
-        task = ToDoList.objects.get(title=title)
-        if request.method == 'POST':
-            print("flknlk")
-            title = request.POST['title']
-            description = request.POST['description']
-            datetime = request.POST['datetime']
-            #  print(datetime)
-            date_time = datetime.split('T')
-            task.title = title
-            task.content = description
-            task.due_date = date_time[0]
-            task.due_time = date_time[1]
-            task.save()
-            redirect(view_task)
-        else:
-            print("sfkjvnj")
-            title = task.title
-            content = task.content
-            due_date = task.due_date
-            due_time = task.due_time
-            status = task.completed
-            template = loader.get_template('update_task.html')
-            return HttpResponse(template.render({
-                'title': title,
-                'content': content,
-                'due_date': due_date,
-                'due_time': due_time,
-                'status': status
-            }))
+        task = ToDoList.objects.get(title=title, owner=request.user)
+        print("sfkjvnj")
+        title = task.title
+        content = task.content
+        due_date = task.due_date
+        due_time = task.due_time
+        status = task.completed
+        template = loader.get_template('update_task.html')
+        return HttpResponse(template.render({
+            'title': title,
+            'content': content,
+            'due_date': due_date,
+            'due_time': due_time,
+            'status': status
+        }))
     except Exception as e:
         print(e)
 
